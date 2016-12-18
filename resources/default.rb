@@ -20,17 +20,27 @@
 actions :create, :remove
 default_action :create
 
-attribute :name,        :kind_of => String, :name_attribute => true
-attribute :user,        :kind_of => String, :default => nil
-attribute :group,       :kind_of => String, :default => nil
-attribute :description, :kind_of => String, :default => nil
-attribute :umask,       :kind_of => String, :default => nil
-attribute :runas,       :kind_of => String, :default => nil
-attribute :chroot,      :kind_of => String, :default => nil
-attribute :chdir,       :kind_of => String, :default => nil
-attribute :nice,        :kind_of => String, :default => nil
-attribute :prestart,    :kind_of => String, :default => nil
-attribute :program,     :kind_of => String, :default => true
-attribute :args,        :kind_of => Array,  :default => ['']
-attribute :platform,    :kind_of => String, :default => node['pleaserun']['platform']
-attribute :target_version, :kind_of => String, :default => node['pleaserun']['target_version']
+attribute :name,                 :kind_of => String, :name_attribute => true
+attribute :user,                 :kind_of => String, :default => nil
+attribute :group,                :kind_of => String, :default => nil
+attribute :description,          :kind_of => String, :default => nil
+attribute :umask,                :kind_of => String, :default => nil
+attribute :runas,                :kind_of => String, :default => nil
+attribute :chroot,               :kind_of => String, :default => nil
+attribute :chdir,                :kind_of => String, :default => nil
+attribute :nice,                 :kind_of => String, :default => nil
+attribute :prestart,             :kind_of => String, :default => nil
+attribute :program,              :kind_of => String, :default => true
+attribute :args,                 :kind_of => Array,  :default => ['']
+attribute :platform,             :kind_of => String, :default => node['pleaserun']['platform']
+attribute :target_version,       :kind_of => String, :default => node['pleaserun']['target_version']
+attribute :limit_coredump,       :kind_of => String, :default => nil
+attribute :limit_cputime,        :kind_of => String, :default => nil
+attribute :limit_data,           :kind_of => String, :default => nil
+attribute :limit_file_size,      :kind_of => String, :default => nil
+attribute :limit_locked_memory,  :kind_of => String, :default => nil
+attribute :limit_open_files,     :kind_of => String, :default => nil
+attribute :limit_user_processes, :kind_of => String, :default => nil
+attribute :limit_physical_memory,:kind_of => String, :default => nil
+attribute :limit_stack_size,     :kind_of => String, :default => nil
+attribute :envs,                 :kind_of => Array,  :default => [{}]

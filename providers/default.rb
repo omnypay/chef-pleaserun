@@ -17,6 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# use_inline_resources
+
 # Support whyrun
 def whyrun_supported?
   true
@@ -24,7 +26,9 @@ end
 
 action :create do
   converge_by("Create #{ @new_resource }") do
-    please_run_me
+    result = please_run_me
+    Chef::Log.info "+++++ result: #{result.inspect}"
+    new_resource.updated_by_last_action(result)
   end
 end
 
@@ -65,12 +69,31 @@ def please_run_me
   pr.program = @new_resource.program
   pr.args = @new_resource.args unless @new_resource.args.empty?
 
+  pr.limit_coredump = @new_resource.limit_coredump unless @new_resource.limit_coredump.nil?
+  pr.limit_cputime = @new_resource.limit_cputime unless @new_resource.limit_cputime.nil?
+  pr.limit_data = @new_resource.limit_data unless @new_resource.limit_data.nil?
+  pr.limit_file_size = @new_resource.limit_file_size unless @new_resource.limit_file_size.nil?
+  pr.limit_locked_memory = @new_resource.limit_locked_memory unless @new_resource.limit_locked_memory.nil?
+  pr.limit_open_files = @new_resource.limit_open_files unless @new_resource.limit_open_files.nil?
+  pr.limit_user_processes = @new_resource.limit_user_processes unless @new_resource.limit_user_processes.nil?
+  pr.limit_physical_memory = @new_resource.limit_physical_memory unless @new_resource.limit_physical_memory.nil?
+  pr.limit_stack_size = @new_resource.limit_stack_size unless @new_resource.limit_stack_size.nil?
+  pr.envs = @new_resource.envs unless (@new_resource.envs.nil? || @new_resource.envs == [] || @new_resource.envs == [{}])
+  
   Chef::Log.info '===> pleaserun'
 
+  changes = false
   pr.files.each do |path, content, perms|
-    write_file(path,content,perms)
+    if new_content?(path, content)
+      write_file(path,content,perms)
+      changes = true
+      Chef::Log.info "wrote file #{path.inspect}"
+    else
+      Chef::Log.info "DID NOT write file #{path.inspect}"
+    end
   end
-
+  Chef::Log.info "Final changes: #{changes.inspect}"
+  changes
 end
 
 def write_file(path,content,perms)
@@ -82,6 +105,14 @@ def write_file(path,content,perms)
     action :create
   end
   Chef::Log.info "------> #{path} - #{perms}:\n, #{content}"
+end
+
+def new_content?(path, new_content)
+  Chef::Log.info "file_changed ::File.exist?(#{path.inspect}): #{::File.exist?(path).inspect}"
+  return true unless ::File.exist?(path)
+
+  existing_content = ::File.read(path)
+  existing_content != new_content
 end
 
 def load_platform(v)
